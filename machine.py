@@ -97,7 +97,7 @@ class Client():
         time = self.messages.pop() 
         self.logical_clock = max(self.logical_clock, time) + 1
         with open(f"log{self.config[1]}.txt", "a+") as f: 
-            f.write("Received a message: system time " + datetime.now().strftime("%H:%M:%S") + ", logical clock time " + str(self.logical_clock) + ", remaining message queue size " + str(len(self.messages)) + "\n")
+            f.write("Received a message: system time " + datetime.now().strftime("%H:%M:%S:%f") + ", logical clock time " + str(self.logical_clock) + ", remaining message queue size " + str(len(self.messages)) + "\n")
         return True
             
     # Sends message to machine at specified port, incrementing logical clock
@@ -105,13 +105,13 @@ class Client():
         self.logical_clock += 1
         self.connections[port].sendall(struct.pack('>I', self.logical_clock))
         with open(f"log{self.config[1]}.txt", "a+") as f: 
-            f.write("Sent a message: system time " + datetime.now().strftime("%H:%M:%S") + ", logical clock time " + str(self.logical_clock) + "\n")
+            f.write("Sent a message: system time " + datetime.now().strftime("%H:%M:%S%f") + ", logical clock time " + str(self.logical_clock) + "\n")
     
     # Performs internal event, incrementing logical clock
     def internal_event(self): 
         self.logical_clock += 1
         with open(f"log{self.config[1]}.txt", "a+") as f: 
-            f.write("Internal event: system time " + datetime.now().strftime("%H:%M:%S") + ", logical clock time " + str(self.logical_clock) + "\n")
+            f.write("Internal event: system time " + datetime.now().strftime("%H:%M:%S%f") + ", logical clock time " + str(self.logical_clock) + "\n")
 
     # Main loop that simulates each clock cycle of the machine
     def run(self): 
