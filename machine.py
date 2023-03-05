@@ -88,6 +88,7 @@ class Client():
         # Initialize logical clock and clock tick rate
         self.logical_clock = 0 
         self.tick = random.randint(1, 6)
+        print(f"Machine {config[1]} has tick rate {self.tick}")
     
     # Reads a message from the message queue if queue non-empty, updating logical clock
     # as appropriate, and returns True; otherwise, does nothing and returns False
@@ -116,8 +117,7 @@ class Client():
     # Main loop that simulates each clock cycle of the machine
     def run(self): 
         while True: 
-            # TODO: add ticks
-            time.sleep(2)
+            start_time = time.time()
             if not self.read_message(): 
                 val = random.randint(1, 10) 
                 if val == 1 or val == 2: 
@@ -127,7 +127,7 @@ class Client():
                         self.write_message(port) 
                 else:
                     self.internal_event()
-
+            time.sleep(1 / self.tick - (time.time() - start_time))
 
 if __name__ == '__main__': 
     port1, port2, port3 = 11113, 22224, 33335 # listening ports for each of the 3 machines
