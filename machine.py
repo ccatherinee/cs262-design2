@@ -118,15 +118,17 @@ class Client():
     def run(self): 
         while True: 
             start_time = time.time()
-            if not self.read_message(): 
+            if not self.read_message(): # if message queue is empty, we cannot read from it
                 val = random.randint(1, 10) 
-                if val == 1 or val == 2: 
+                if val == 1 or val == 2: # write a message to one of the other two machines
                     self.write_message(self.config[val + 1])
-                elif val == 3: 
+                elif val == 3: # write a message to both of the other two machines
                     for port in self.config[2:]: 
                         self.write_message(port) 
-                else:
+                else: # perform an internal event to this machine only
                     self.internal_event()
+            # Ensure that each clock cycle takes exactly 1 / self.tick seconds,
+            # meaning that every second, the machine can perform self.tick clock cycles
             time.sleep(1 / self.tick - (time.time() - start_time))
 
 if __name__ == '__main__': 
