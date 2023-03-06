@@ -3,36 +3,36 @@ from unittest import mock
 
 
 class TestServerMethods(unittest.TestCase):
-    def test_init():
+    def test_init(self):
         pass
 
-    def test_accept_wrapper():
+    def test_accept_wrapper(self):
         pass
 
-    def test_service_connection():
+    def test_service_connection(self):
         pass
 
-    def test_recvall():
+    def test_recvall(self):
         pass
 
-    def test_run():
+    def test_run(self):
         pass
 
 
 class TestClientMethods(unittest.TestCase):
-    def test_init():
+    def test_init(self):
         pass
 
-    def test_read_message():
+    def test_read_message(self):
         pass
 
-    def test_write_message():
+    def test_write_message(self):
         pass
 
-    def test_internal_event():
+    def test_internal_event(self):
         pass
 
-    def test_run():
+    def test_run(self):
         pass
 
 
