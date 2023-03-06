@@ -131,6 +131,7 @@ class Client():
             # meaning that every second, the machine can perform self.tick clock cycles
             time.sleep(1 / self.tick - (time.time() - start_time))
 
+
 if __name__ == '__main__': 
     port1, port2, port3 = 11113, 22224, 33335 # listening ports for each of the 3 machines
 
