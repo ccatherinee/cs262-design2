@@ -1,0 +1,65 @@
+Internal event: system time 11:11:48, logical clock time 1
+Received a message: system time 11:11:49, logical clock time 3, remaining message queue size 1
+Received a message: system time 11:11:50, logical clock time 4, remaining message queue size 0
+Sent a message: system time 11:11:51, logical clock time 5
+Sent a message: system time 11:11:51, logical clock time 5
+Internal event: system time 11:11:52, logical clock time 6
+Received a message: system time 11:11:53, logical clock time 15, remaining message queue size 0
+Sent a message: system time 11:11:54, logical clock time 16
+Sent a message: system time 11:11:54, logical clock time 16
+Internal event: system time 11:11:55, logical clock time 17
+Internal event: system time 11:11:56, logical clock time 18
+Sent a message: system time 11:11:57, logical clock time 19
+Internal event: system time 11:11:58, logical clock time 20
+Received a message: system time 11:11:59, logical clock time 34, remaining message queue size 0
+Received a message: system time 11:12:00, logical clock time 36, remaining message queue size 0
+Internal event: system time 11:12:01, logical clock time 37
+Received a message: system time 11:12:02, logical clock time 42, remaining message queue size 0
+Sent a message: system time 11:12:03, logical clock time 43
+Internal event: system time 11:12:04, logical clock time 44
+Received a message: system time 11:12:05, logical clock time 50, remaining message queue size 0
+Received a message: system time 11:12:06, logical clock time 54, remaining message queue size 0
+Internal event: system time 11:12:07, logical clock time 55
+Sent a message: system time 11:12:08, logical clock time 56
+Internal event: system time 11:12:09, logical clock time 57
+Sent a message: system time 11:12:10, logical clock time 58
+Internal event: system time 11:12:11, logical clock time 59
+Received a message: system time 11:12:12, logical clock time 72, remaining message queue size 0
+Internal event: system time 11:12:13, logical clock time 73
+Internal event: system time 11:12:14, logical clock time 74
+Received a message: system time 11:12:15, logical clock time 82, remaining message queue size 0
+Sent a message: system time 11:12:16, logical clock time 83
+Internal event: system time 11:12:17, logical clock time 84
+Internal event: system time 11:12:18, logical clock time 85
+Received a message: system time 11:12:19, logical clock time 86, remaining message queue size 0
+Received a message: system time 11:12:20, logical clock time 97, remaining message queue size 0
+Received a message: system time 11:12:21, logical clock time 100, remaining message queue size 0
+Internal event: system time 11:12:22, logical clock time 101
+Received a message: system time 11:12:23, logical clock time 106, remaining message queue size 0
+Received a message: system time 11:12:24, logical clock time 108, remaining message queue size 0
+Internal event: system time 11:12:25, logical clock time 109
+Internal event: system time 11:12:26, logical clock time 110
+Internal event: system time 11:12:27, logical clock time 111
+Received a message: system time 11:12:28, logical clock time 115, remaining message queue size 0
+Received a message: system time 11:12:29, logical clock time 122, remaining message queue size 0
+Received a message: system time 11:12:30, logical clock time 127, remaining message queue size 0
+Received a message: system time 11:12:31, logical clock time 128, remaining message queue size 0
+Internal event: system time 11:12:32, logical clock time 129
+Internal event: system time 11:12:33, logical clock time 130
+Received a message: system time 11:12:34, logical clock time 137, remaining message queue size 0
+Sent a message: system time 11:12:35, logical clock time 138
+Sent a message: system time 11:12:36, logical clock time 139
+Received a message: system time 11:12:37, logical clock time 148, remaining message queue size 0
+Sent a message: system time 11:12:38, logical clock time 149
+Internal event: system time 11:12:39, logical clock time 150
+Received a message: system time 11:12:40, logical clock time 155, remaining message queue size 0
+Received a message: system time 11:12:41, logical clock time 159, remaining message queue size 0
+Received a message: system time 11:12:42, logical clock time 163, remaining message queue size 0
+Internal event: system time 11:12:43, logical clock time 164
+Received a message: system time 11:12:44, logical clock time 165, remaining message queue size 0
+Internal event: system time 11:12:45, logical clock time 166
+Received a message: system time 11:12:46, logical clock time 167, remaining message queue size 0
+Internal event: system time 11:12:47, logical clock time 168
+Internal event: system time 11:12:48, logical clock time 169
+Received a message: system time 11:12:49, logical clock time 182, remaining message queue size 0
+Received a message: system time 11:12:50, logical clock time 185, remaining message queue size 1
