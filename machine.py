@@ -95,7 +95,7 @@ class Client():
     def read_message(self): 
         if not self.messages: 
             return False
-        time = self.messages.pop() 
+        time = self.messages.pop(0) # get the left-most/earliest message in the list/queue
         self.logical_clock = max(self.logical_clock, time) + 1
         with open(f"log{self.config[1]}.txt", "a+") as f: 
             f.write("Received a message: system time " + datetime.now().strftime("%H:%M:%S:%f") + ", logical clock time " + str(self.logical_clock) + ", remaining message queue size " + str(len(self.messages)) + "\n")
