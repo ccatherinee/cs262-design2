@@ -98,38 +98,42 @@ class Client():
         time = self.messages.pop(0) # get the left-most/earliest message in the list/queue
         self.logical_clock = max(self.logical_clock, time) + 1
         with open(f"log{self.config[1]}.txt", "a+") as f: 
-            f.write("Received a message: system time " + datetime.now().strftime("%H:%M:%S:%f") + ", logical clock time " + str(self.logical_clock) + ", remaining message queue size " + str(len(self.messages)) + "\n")
+            f.write("Received a message: system time " + datetime.now().strftime("%H:%M:%S") + ", logical clock time " + str(self.logical_clock) + ", remaining message queue size " + str(len(self.messages)) + "\n")
         return True
             
-    # Sends message to machine at specified port, incrementing logical clock
-    def write_message(self, port): 
+    # Sends message to machine at specified ports, incrementing logical clock once
+    def write_message(self, ports): 
         self.logical_clock += 1
-        self.connections[port].sendall(struct.pack('>I', self.logical_clock))
         with open(f"log{self.config[1]}.txt", "a+") as f: 
-            f.write("Sent a message: system time " + datetime.now().strftime("%H:%M:%S%f") + ", logical clock time " + str(self.logical_clock) + "\n")
+            for port in ports:
+                self.connections[port].sendall(struct.pack('>I', self.logical_clock))
+                f.write("Sent a message: system time " + datetime.now().strftime("%H:%M:%S") + ", logical clock time " + str(self.logical_clock) + "\n")
     
     # Performs internal event, incrementing logical clock
     def internal_event(self): 
         self.logical_clock += 1
         with open(f"log{self.config[1]}.txt", "a+") as f: 
-            f.write("Internal event: system time " + datetime.now().strftime("%H:%M:%S%f") + ", logical clock time " + str(self.logical_clock) + "\n")
+            f.write("Internal event: system time " + datetime.now().strftime("%H:%M:%S") + ", logical clock time " + str(self.logical_clock) + "\n")
 
-    # Main loop that simulates each clock cycle of the machine
+    # Main loop that infinitely runs each clock cycle of the machine
     def run(self): 
         while True: 
-            start_time = time.time()
-            if not self.read_message(): # if message queue is empty, we cannot read from it
-                val = random.randint(1, 10) 
-                if val == 1 or val == 2: # write a message to one of the other two machines
-                    self.write_message(self.config[val + 1])
-                elif val == 3: # write a message to both of the other two machines
-                    for port in self.config[2:]: 
-                        self.write_message(port) 
-                else: # perform an internal event to this machine only
-                    self.internal_event()
-            # Ensure that each clock cycle takes exactly 1 / self.tick seconds,
-            # meaning that every second, the machine can perform self.tick clock cycles
-            time.sleep(1 / self.tick - (time.time() - start_time))
+            self._perform_clock_cycle()
+
+    # Helper function that simulates exactly one clock cycle of the machine
+    def _perform_clock_cycle(self):
+        start_time = time.time()
+        if not self.read_message(): # if message queue is empty, we cannot read from it
+            val = random.randint(1, 10) 
+            if val == 1 or val == 2: # write a message to one of the other two machines
+                self.write_message([self.config[val + 1]])
+            elif val == 3: # write a message to both of the other two machines
+                self.write_message(self.config[2:]) 
+            else: # perform an internal event to this machine only
+                self.internal_event()
+        # Ensure that each clock cycle takes exactly 1 / self.tick seconds,
+        # meaning that every second, the machine can perform self.tick clock cycles
+        time.sleep(1 / self.tick - (time.time() - start_time))
 
 
 if __name__ == '__main__': 

@@ -177,13 +177,13 @@ class TestClientMethods(unittest.TestCase):
 
     @mock.patch("struct.pack")
     @mock.patch("socket.socket")
-    def test_write_message(self, mock_socket, mock_pack):
+    def test_write_message_to_one_machine(self, mock_socket, mock_pack):
         mock_sock1, mock_sock2 = mock.Mock(name="sock1"), mock.Mock(name="sock2")
         mock_socket.side_effect = [mock_sock1, mock_sock2]
         client = machine.Client(config=["test_host", "test_port1", "test_port2", "test_port3"], messages=self.messages)
         client.logical_clock = 261
         with mock.patch("builtins.open", mock.mock_open(read_data="data")) as mock_file:
-            client.write_message("test_port2")
+            client.write_message(["test_port2"])
             self.assertEqual(262, client.logical_clock)
             mock_sock1.sendall.assert_called_once_with(mock_pack.return_value)
             self.assertIn(mock.call('logtest_port1.txt', 'a+'), mock_file.mock_calls)
@@ -192,7 +192,22 @@ class TestClientMethods(unittest.TestCase):
 
     @mock.patch("struct.pack")
     @mock.patch("socket.socket")
-    def test_internal_event(self, mock_socket, mock_pack):
+    def test_write_message_to_two_machines(self, mock_socket, mock_pack):
+        mock_sock1, mock_sock2 = mock.Mock(name="sock1"), mock.Mock(name="sock2")
+        mock_socket.side_effect = [mock_sock1, mock_sock2]
+        client = machine.Client(config=["test_host", "test_port1", "test_port2", "test_port3"], messages=self.messages)
+        client.logical_clock = 260
+        with mock.patch("builtins.open", mock.mock_open(read_data="data")) as mock_file:
+            client.write_message(["test_port2", "test_port3"])
+            self.assertEqual(261, client.logical_clock)
+            mock_sock1.sendall.assert_called_once_with(mock_pack.return_value)
+            mock_sock2.sendall.assert_called_once_with(mock_pack.return_value)
+            self.assertIn(mock.call('logtest_port1.txt', 'a+'), mock_file.mock_calls)
+            self.assertIn(mock.call().write(mock.ANY), mock_file.mock_calls)
+            self.assertEqual([], self.messages)
+
+    @mock.patch("socket.socket")
+    def test_internal_event(self, mock_socket):
         mock_sock1, mock_sock2 = mock.Mock(name="sock1"), mock.Mock(name="sock2")
         mock_socket.side_effect = [mock_sock1, mock_sock2]
         client = machine.Client(config=["test_host", "test_port1", "test_port2", "test_port3"], messages=self.messages)
@@ -204,6 +219,84 @@ class TestClientMethods(unittest.TestCase):
             self.assertIn(mock.call().write(mock.ANY), mock_file.mock_calls)
             self.assertEqual([], self.messages) 
 
+    @mock.patch("time.sleep")
+    @mock.patch("time.time")
+    @mock.patch("machine.Client.internal_event")
+    @mock.patch("machine.Client.read_message")
+    @mock.patch("machine.Client.write_message")
+    @mock.patch("socket.socket")
+    def test_perform_clock_cycle_read_message(self, mock_socket, mock_write, mock_read, mock_internal, mock_time, mock_sleep):
+        mock_sock1, mock_sock2 = mock.Mock(name="sock1"), mock.Mock(name="sock2")
+        mock_socket.side_effect = [mock_sock1, mock_sock2]
+        client = machine.Client(config=["test_host", "test_port1", "test_port2", "test_port3"], messages=self.messages)
+        client.tick = 4
+        mock_time.side_effect = [1, 1.08]
+        mock_read.return_value = True
+        with mock.patch("random.randint") as mock_randint:
+            client._perform_clock_cycle()
+            mock_randint.assert_not_called()
+            mock_sleep.assert_called_once_with(1 / client.tick - (1.08 - 1))
+
+    @mock.patch("time.sleep")
+    @mock.patch("time.time")
+    @mock.patch("machine.Client.internal_event")
+    @mock.patch("machine.Client.read_message")
+    @mock.patch("machine.Client.write_message")
+    @mock.patch("socket.socket")
+    def test_perform_clock_cycle_send_one_message(self, mock_socket, mock_write, mock_read, mock_internal, mock_time, mock_sleep):
+        mock_sock1, mock_sock2 = mock.Mock(name="sock1"), mock.Mock(name="sock2")
+        mock_socket.side_effect = [mock_sock1, mock_sock2]
+        client = machine.Client(config=["test_host", "test_port1", "test_port2", "test_port3"], messages=self.messages)
+        client.tick = 3
+        mock_time.side_effect = [1, 1.03]
+        mock_read.return_value = False
+        with mock.patch("random.randint") as mock_randint:
+            mock_randint.return_value = 2
+            client._perform_clock_cycle()
+            mock_randint.assert_called_once_with(1, 10)
+            mock_write.assert_called_once_with(["test_port3"])
+            mock_sleep.assert_called_once_with(1 / client.tick - (1.03 - 1))
+
+    @mock.patch("time.sleep")
+    @mock.patch("time.time")
+    @mock.patch("machine.Client.internal_event")
+    @mock.patch("machine.Client.read_message")
+    @mock.patch("machine.Client.write_message")
+    @mock.patch("socket.socket")
+    def test_perform_clock_cycle_send_two_messages(self, mock_socket, mock_write, mock_read, mock_internal, mock_time, mock_sleep):
+        mock_sock1, mock_sock2 = mock.Mock(name="sock1"), mock.Mock(name="sock2")
+        mock_socket.side_effect = [mock_sock1, mock_sock2]
+        client = machine.Client(config=["test_host", "test_port1", "test_port2", "test_port3"], messages=self.messages)
+        client.tick = 6
+        mock_time.side_effect = [1, 1.04]
+        mock_read.return_value = False
+        with mock.patch("random.randint") as mock_randint:
+            mock_randint.return_value = 3
+            client._perform_clock_cycle()
+            mock_randint.assert_called_once_with(1, 10)
+            mock_write.assert_called_once_with(["test_port2", "test_port3"])
+            mock_sleep.assert_called_once_with(1 / client.tick - (1.04 - 1))
+
+    @mock.patch("time.sleep")
+    @mock.patch("time.time")
+    @mock.patch("machine.Client.internal_event")
+    @mock.patch("machine.Client.read_message")
+    @mock.patch("machine.Client.write_message")
+    @mock.patch("socket.socket")
+    def test_perform_clock_cycle_internal_event(self, mock_socket, mock_write, mock_read, mock_internal, mock_time, mock_sleep):
+        mock_sock1, mock_sock2 = mock.Mock(name="sock1"), mock.Mock(name="sock2")
+        mock_socket.side_effect = [mock_sock1, mock_sock2]
+        client = machine.Client(config=["test_host", "test_port1", "test_port2", "test_port3"], messages=self.messages)
+        client.tick = 5
+        mock_time.side_effect = [1, 1.02]
+        mock_read.return_value = False
+        with mock.patch("random.randint") as mock_randint:
+            mock_randint.return_value = 4
+            client._perform_clock_cycle()
+            mock_randint.assert_called_once_with(1, 10)
+            mock_write.assert_not_called()
+            mock_internal.assert_called_once()
+            mock_sleep.assert_called_once_with(1 / client.tick - (1.02 - 1))
 
 if __name__ == '__main__':
     unittest.main()
